@@ -1,0 +1,31 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestRegressor
+import math
+from sklearn import preprocessing
+from sklearn.metrics import mean_squared_error
+
+
+train_data = pd.read_csv('./data/1.csv',index_col=None,delimiter=',')
+test_data = pd.read_csv('./data/2.csv',index_col=None,delimiter=',')
+
+Scaler = preprocessing.MinMaxScaler(feature_range=(0, 1))
+train_y = train_data.money
+
+predictor_col = ['time']
+train_x = test_data[predictor_col]
+train_x = train_x.dropna(axis=0)
+
+
+my_model = RandomForestRegressor()
+my_model.fit(train_x,train_y)
+
+test_X = test_data[predictor_col]
+predicted_prices = my_model.predict(test_X)
+
+error = math.sqrt(mean_squared_error(predicted_prices, train_y))
+print('训练误差:{}'.format(error))
+
+plt.plot(train_x,train_y,label='Second line',linewidth=2,color='b')
+plt.plot(test_X,predicted_prices,label='Frist line',linewidth=2,color='r')
+plt.show()
